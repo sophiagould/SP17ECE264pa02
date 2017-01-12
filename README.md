@@ -125,7 +125,7 @@ You will get an error. This is because `-Werror` forces `gcc` to treat all warni
 
 Now when you compile `wrongindex3.c`: 
 
-`> gcc wrongindex3.c -o wrongindex3`
+`> gcc wrongindex3.c -o wrongindex3 -g`
 
 you will see several warning messages that you can ignore.
 
