@@ -91,8 +91,8 @@ Hexidecimal Number System
 Decimal numbers (0, 1, 2, ..., 9), which are base 10, are widely used in daily life but
 computers understand only binary numbers (i.e., 0 or 1).  Binary
 numbers can be quite long, so another common representation is
-hexademical numbers (0, 1, 2, ..., 9, A, B, C, D, E, F), which are base 16.  A hexidecimal
-number starts with 0x to indicate that it is hexidecimal. "Hexadecimal" is often called "hex" for short.
+hexadecimal numbers (0, 1, 2, ..., 9, A, B, C, D, E, F), which are base 16.  A hexadecimal
+number starts with 0x to indicate that it is hexadecimal. "Hexadecimal" is often called "hex" for short.
 
 Hexadecimal numbers are a convenient representation because a group of four
 binary digits can be represented by one hex digit. Some examples are:
@@ -111,16 +111,23 @@ simpler method: by matching a function's addresses with the values
 stored in the stack memory.
 
 Consider the program `wrongindex3.c`. Use `gcc` to create the executable.
-Make sure your `gcc` is an alias of 
+In [PA01](../PA01), we told you to always run `gcc` as follows:
 
 `gcc -std=c99 -g -Wall -Wshadow --pedantic -Wvla -Werror`
 
-as explained in [PA01](../PA01).
+However, if you try to compile `wrongindex3.c`:
 
-`gcc wrongindex3.c -o wrongindex3`
+`> gcc -std=c99 -g -Wall -Wshadow --pedantic -Wvla -Werror wrongindex3.c -o wrongindex3`
 
-You will see several warning messages. Do not worry about these
-warning messages in assignments.
+You will get an error. This is because `-Werror` forces `gcc` to treat all warnings as errors. In this assignment, we don't want that. If your `gcc` is aliased, *for this assignment only* unalias it:
+
+`> unalias gcc`
+
+Now when you compile `wrongindex3.c`: 
+
+`> gcc wrongindex3.c -o wrongindex3`
+
+you will see several warning messages that you can ignore.
 
 *This is the only assignment which allows warning messages.*
 
@@ -140,28 +147,28 @@ Type
 You can see the following output
 
 ```
-22	{
-   0x0000000000400685 <+0>:	push   %rbp
-   0x0000000000400686 <+1>:	mov    %rsp,%rbp
-   0x0000000000400689 <+4>:	sub    $0x20,%rsp
-   0x000000000040068d <+8>:	mov    %edi,-0x14(%rbp)
-   0x0000000000400690 <+11>:	mov    %rsi,-0x20(%rbp)
+29	{
+   0x0000000000400577 <+0>:	push   %rbp
+   0x0000000000400578 <+1>:	mov    %rsp,%rbp
+   0x000000000040057b <+4>:	sub    $0x20,%rsp
+   0x000000000040057f <+8>:	mov    %edi,-0x14(%rbp)
+   0x0000000000400582 <+11>:	mov    %rsi,-0x20(%rbp)
 
-23	  int main_top = 0xEEEE; // used as references
-   0x0000000000400694 <+15>:	movl   $0xeeee,-0x8(%rbp)
+30	  int main_top = 0xEEEEEEEE; // used as references
+   0x0000000000400586 <+15>:	movl   $0xeeeeeeee,-0x8(%rbp)
 
-24	  f1();	
-   0x000000000040069b <+22>:	callq  0x40059d <f1>
+31	  f1();	
+   0x000000000040058d <+22>:	callq  0x4004cb <f1>
 
-25	  int main_btm = 0xFFFF; // used as references
-   0x00000000004006a0 <+27>:	movl   $0xffff,-0x4(%rbp)
+32	  int main_btm = 0xFFFFFFFF; // used as references
+   0x0000000000400592 <+27>:	movl   $0xffffffff,-0x4(%rbp)
 
-26	  return EXIT_SUCCESS;
-   0x00000000004006a7 <+34>:	mov    $0x0,%eax
+33	  return EXIT_SUCCESS;
+   0x0000000000400599 <+34>:	mov    $0x0,%eax
 
-27	}
-   0x00000000004006ac <+39>:	leaveq 
-   0x00000000004006ad <+40>:	retq   
+34	}
+   0x000000000040059e <+39>:	leaveq 
+   0x000000000040059f <+40>:	retq   
 ```
 
 The hexadecimal numbers on the left (e.g., `0x0000000000400689`) represent the addresses in memory where the assembly instructions on the right (`push`, `sub`, etc.) Please be aware that the specific addresses may be different in your program.
@@ -170,35 +177,32 @@ Next, type
 
 `(gdb) disass/m f1`
 
-This is the output
+This is the first several lines of the output
 
 ```
-   0x000000000040059d <+0>:	push   %rbp
-   0x000000000040059e <+1>:	mov    %rsp,%rbp
-   0x00000000004005a1 <+4>:	sub    $0x30,%rsp
-   0x00000000004005a5 <+8>:	mov    %fs:0x28,%rax
-   0x00000000004005ae <+17>:	mov    %rax,-0x8(%rbp)
-   0x00000000004005b2 <+21>:	xor    %eax,%eax
+11	{
+   0x00000000004004cb <+0>:	push   %rbp
+   0x00000000004004cc <+1>:	mov    %rsp,%rbp
+   0x00000000004004cf <+4>:	sub    $0x20,%rsp
 
-6	  int f1_top = 0xAAAA; // used as references
-   0x00000000004005b4 <+23>:	movl   $0xaaaa,-0x28(%rbp)
+12	  int f1_top = 0xAAAAAAAA; // used as references
+   0x00000000004004d3 <+8>:	movl   $0xaaaaaaaa,-0x8(%rbp)
 ```
 
-
-Do you notice that "`0x40059d`" appears again? It appears earlier in main:
+Do you notice that "`0x4004cb`" appears again? It appears earlier in main:
 
 ```
-24	  f1();	
-   0x000000000040069b <+22>:	callq  0x40059d <f1>
+31	  f1();	
+   0x000000000040058d <+22>:	callq  0x4004cb <f1>
 ```
 
 It appears again as the very beginning of f1
 
 ```
-   0x000000000040059d <+0>:	push   %rbp
+   0x00000000004004cb <+0>:	push   %rbp
 ```
 
-What does this mean? This is the address of the function `f1`.
+What does this mean? This is the address of the function `f1`. The line in `main` is calling `f1`, and it uses the address to tell where to jump to.
 
 Similarly, it is possible to find the beginning of `f2`:
 
@@ -207,16 +211,20 @@ Type
 `(gdb) disass/m f2`
 
 
-This is the output
+This is the first few lines of the output
 
 ```
-   0x0000000000400608 <+0>:	push   %rbp
-   0x0000000000400609 <+1>:	mov    %rsp,%rbp
-   0x000000000040060c <+4>:	sub    $0x40,%rsp
-   0x0000000000400610 <+8>:	mov    %fs:0x28,%rax
-   0x0000000000400619 <+17>:	mov    %rax,-0x8(%rbp)
-   0x000000000040061d <+21>:	xor    %eax,%eax
+21	{
+   0x000000000040051d <+0>:	push   %rbp
+   0x000000000040051e <+1>:	mov    %rsp,%rbp
+   0x0000000000400521 <+4>:	sub    $0x30,%rsp
+
+22	  int f2_top = 0xCCCCCCCC; // used as references
+   0x0000000000400525 <+8>:	movl   $0xcccccccc,-0x8(%rbp)
+
 ```
+
+The address of `f2` is `0x000000000040051d`.
 
 Set a breakpoint at `f1`:
 
@@ -233,41 +241,48 @@ followed by the amount of memory to be shown.  For example,
 
 `x/80bx` shows 80 bytes of memory in hexadecimal.  In x86 (i.e., Intel)
 processors, `$rsp` is the stack pointer.  The stack pointer is the very
-top of the stack memory.
+top of the stack memory. 
+
+Note that by convention, the "top" of the stack has the lowest address. When we add data to the stack, the stack pointer moves to a *lower* address. That is why `f2` has the instruction `sub    $0x30,%rsp`: it's adding 48 bytes to the stack by *subtracting* 48 from the address stored in `rsp`. (Don't forget your hex numbers! 0x30 in hex is 48)
 
 If you type
 
 ```
 (gdb) x/80bx $rsp
-0x7fffffffe330:    0xf8    0x51    0xa2    0xf7    0xff    0x7f    0x00    0x00
-0x7fffffffe338:    0xc0    0x74    0xff    0xf7    0xff    0x7f    0x00    0x00
-0x7fffffffe340:    0xc8    0xe1    0xff    0xf7    0xff    0x7f    0x00    0x00
-0x7fffffffe348:    0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe350:    0x01    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe358:    0xfd    0x06    0x40    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe360:    0x90    0xe3    0xff    0xff     0xff   0x7f    0x00    0x00
-0x7fffffffe368:    0xa0    0x06    0x40    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe370:    0x78    0xe4    0xff    0xff    0xff    0x7f    0x00    0x00
-0x7fffffffe378:    0xb0    0x04    0x40    0x00    0x01    0x00    0x00    0x00
 ```
 
-This shows 80 bytes from the stack pointer.
-
-If you pay careful attention, you may have noticed the value
-
-`   0x00000000004006a0` appears starting from 
-
-`0x7fffffffe368`
-
-`   0x00000000004006a0` is the return location for function call `f1`. 
+You will see:
 
 ```
-25	  int main_btm = 0xFFFF; // used as references
-   0x00000000004006a0 <+27>:	movl   $0xffff,-0x4(%rbp)
+0x7fffffffe3b0:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3b8:	0xa3	0x03	0x40	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3c0:	0xf8	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3c8:	0xf5	0x05	0x40	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3d0:	0x00	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3d8:	0x92	0x05	0x40	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3e0:	0xe8	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3e8:	0xe0	0x03	0x40	0x00	0x01	0x00	0x00	0x00
+0x7fffffffe3f0:	0xe0	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3f8:	0xee	0xee	0xee	0xee	0x00	0x00	0x00	0x00
+```
+
+This shows 80 bytes of memory, starting from the stack pointer. Because the stack grows "down," this shows the last 80 bytes of data that have been added to the stack. The hexadecimal numbers on the left represent memory addresses (note that they are much larger numbers than the addresses of the program! This is because the addresses of the program are in program memory, which is a different portion of memory than the stack memory, which uses much higher addresses.)
+
+If you pay careful attention, you may have noticed the value `0x0000000000400592` appears starting at address `0x7fffffffe3d8`:
+
+`0x7fffffffe3d8:	0x92	0x05	0x40	0x00	0x00	0x00	0x00	0x00`
+
+`0x0000000000400592` is the return location for function call `f1`. 
+
+```
+32	  int main_btm = 0xFFFFFFFF; // used as references
+   0x0000000000400592 <+27>:	movl   $0xffffffff,-0x4(%rbp)
 ```   
 
-The byte order is reversed because Intel processors use "Little
-Endian".  The return location has 8 bytes because this example is
+The byte order appears reversed because Intel processors store numbers in "Little
+Endian" format. Rather than the least significant byte (`0x92`) being stored
+in the largest address (which is called "Big Endian"), the least significant byte is stored in the *smallest* address. So when you write out the bytes the "normal" way (starting at the smallest address), the bytes look backwards.
+The return location has 8 bytes because this example is
 created on a machine with 64-bit addresses.
 
 Use the `next` (or `n`) command to go to the next line in `f1`:
@@ -281,40 +296,67 @@ Use the `next` (or `n`) command to go to the next line in `f1`:
 again and the output is
 
 ```
-0x7fffffffe330:    0xf8    0x51    0xa2    0xf7    0xff    0x7f    0x00    0x00
-0x7fffffffe338:    0xaa    0xaa    0x00    0x00    0xff    0x7f    0x00    0x00
-0x7fffffffe340:    0x09    0x08    0x07    0x06    0x05    0x04    0x03    0x02
-0x7fffffffe348:    0x01    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe350:    0x01    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe358:    0x00    0x4d    0x01    0xd5    0x8f    0x1b    0x34    0x5d
-0x7fffffffe360:    0x90    0xe3    0xff    0xff    0xff    0x7f    0x00    0x00
-0x7fffffffe368:    0xa0    0x06    0x40    0x00    0x00    0x00    0x00    0x00
-0x7fffffffe370:    0x78    0xe4    0xff    0xff    0xff    0x7f    0x00    0x00
-0x7fffffffe378:    0xb0    0x04    0x40    0x00    0x01    0x00    0x00    0x00
+0x7fffffffe3b0:	0x09	0x08	0x07	0x06	0x05	0x04	0x03	0x02
+0x7fffffffe3b8:	0x01	0x00	0x40	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3c0:	0xf8	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3c8:	0xaa	0xaa	0xaa	0xaa	0xbb	0xbb	0xbb	0xbb
+0x7fffffffe3d0:	0x00	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3d8:	0x92	0x05	0x40	0x00	0x00	0x00	0x00	0x00
+0x7fffffffe3e0:	0xe8	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3e8:	0xe0	0x03	0x40	0x00	0x01	0x00	0x00	0x00
+0x7fffffffe3f0:	0xe0	0xe4	0xff	0xff	0xff	0x7f	0x00	0x00
+0x7fffffffe3f8:	0xee	0xee	0xee	0xee	0x00	0x00	0x00	0x00
 ```
 
 Did you notice that the values starting from
 
-`0x7fffffffe340`
+`0x7fffffffe3b0`
 
-appear to be the values of the names elements? You can verify that by typing
+appear to be the values of the names elements? 
 
-`(gdb) print & name[0]`
+```
+0x7fffffffe3b0:	0x09	0x08	0x07	0x06	0x05	0x04	0x03	0x02
+0x7fffffffe3b8:	0x01	0x00	0x40	0x00	0x00	0x00	0x00	0x00
+```
+
+You can verify that by typing
+
+`(gdb) print &name`
+
+Which will print the address where the variable `name` is stored in memory:
+
+`$1 = (char (*)[10]) 0x7fffffffe3b0`
 
 Buffer Overflow Attack
 ----------------------
 
 This program modifies the values of `name[40]` and `name[41]`. The
 indexes are invalid and they happen to be the memory where the return
-location is stored.  What values should the program modify to?  The value
+location is stored. If you count up 40 bytes (5 rows of 8 bytes) from the
+location where `name` starts (`0x7fffffffe3b0`) you get to `0x7fffffffe3d8`
+which is the location of the return address we found from above. 
+
+`name[40]`, in C, just means "40 `char`s from the beginning of `name`. (It's 40 `chars` because name is an array of `char`s. If `name` were an array of `int`s, `name[40]` would mean "40 `int`s from the beginning of `name`.) A `char` takes up 1 byte, so `name[40]` means 40 bytes from the beginning of `name`. If we write to those bytes, we will overwrite whatever data is stored in location `0x7fffffffe3d8`! We will change the return address, and when we get to the end of `f1`, we will use the wrong address to return to!
+
+What values should the program modify to?  The value
 should be the beginning of `f2` (from `disass/m f2`).
 
 ```
-  name[40] = 0x08;
-  name[41] = 0x06;
+  name[40] = 0x1d;
+  name[41] = 0x05;
 ```  
 
-If you continue this program
+(The exact location of `f2` may be different for you, so the values of `name[40]` and `name[41]` might need to be changed to make this example work.)
+
+If we change those locations, that will change this portion of memory:
+
+`0x7fffffffe3c8:	0x92	0x05	0x40	0x00	0x00	0x00	0x00	0x00`
+
+to:
+
+`0x7fffffffe3c8:	0x1d	0x05	0x40	0x00	0x00	0x00	0x00	0x00`
+
+Now, if you continue the program:
 
 `(gdb) c`
 
@@ -327,7 +369,7 @@ never calls `f2`! How can it be possible to execute code in `f2`? Because
 your program uses bad indexes (`40` and `41`) to modify the return
 location.
 
-This program will cause a "segmentation fault" because the operating
+This program will then cause a "segmentation fault" because the operating
 system detects something wrong and stops the program.  Nevertheless,
 you can say the damage has been done.
 
