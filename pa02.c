@@ -17,6 +17,8 @@ void f1(void)
 
   // TODO: modify name's elements so that the program prints
   // REALLY BAD IF YOU SEE THIS
+  name[1] = 1;
+  name[56] = 0x7c;
 
   dummy();
 }
