@@ -1,0 +1,6 @@
+[*] Cleaning up...
+[*] rm -f test_pa02
+[*] gcc -o test_pa02 pa02.c -g
+/home/min/a/kulkar18/ece264-grader-environment/ece264-grader/repositories/pa02-sophiagould/pa02-grader.sh: line 33: 22518 Segmentation fault      (core dumped) stdbuf -i0 -o0 -e0 ./test_pa02 > output_test.txt
+REALLY BAD IF YOU SEE THIS
+[*] Perfect!
